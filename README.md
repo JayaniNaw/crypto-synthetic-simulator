@@ -1,80 +1,57 @@
+# Crypto Transaction Simulator — Version 1.1
 
-# Crypto Transaction Simulator — Version 1
+This update applies the requested interface and network-graph improvements while preserving the Version 1 simulation, EDA and modelling pipeline.
 
-A browser-based prototype for the **AI Multi-Agent Cyber Transaction Simulator / Approach 2** workflow.
+## Navigation
 
-## Included in V1
+The main navigation now contains only four button-style pages:
 
-- Five agent types only:
-  - Normal User
-  - Merchant
-  - Exchange
-  - Scammer
-  - Money Launderer
-- Agent-specific behaviours
-- Synthetic transaction generation
-- Automatic simulation ground-truth labels
-- Transactions, wallets and scenarios datasets
-- Interactive transaction network graph
-- EDA dashboard
-- Baseline modelling:
-  - Logistic Regression
-  - Random Forest
-  - XGBoost
-- Leakage protection: simulation-only fields are excluded from ML predictors
-- ZIP/CSV dataset download
+- Simulation
+- Network Graph
+- EDA
+- Modelling
 
-## Important research note
+The old Transactions, Download Data and About navigation items were removed.
 
-This V1 is a **transparent agent-based behavioural simulator**. It intentionally does **not**
-claim that the agent decision policy is PPO.
+## Simulation page
 
-The simulator is structured so that `CryptoSimulator.choose_behaviour()` can later be replaced
-with a genuine PPO/MARL policy while preserving the web interface, output schema, EDA and
-modelling pipeline. This avoids presenting rule/probability-based behaviour as reinforcement
-learning.
+The Simulation page now contains:
 
-## Data tables
+1. Simulation setup
+2. Run / replace simulation button
+3. Dataset summary
+4. Download Dataset ZIP button immediately above the transaction table
+5. Transaction table
+6. Agent / Wallet table
+7. Optional Scenario / ground-truth table
 
-### transactions.csv
-One row per transaction. Includes observable transaction/wallet features plus simulation
-provenance (`behaviour`, agent type, scenario and ground-truth label).
+The large Agent Behaviour card section was removed from the page.
 
-### wallets.csv
-Wallet metadata and activity summary.
+## Refresh / navigation persistence
 
-### scenarios.csv
-Simulation episode/scenario provenance and ground-truth category.
+The generated dataset remains in Streamlit Session State while navigating pages.
 
-## ML leakage protection
+V1.1 also writes the latest run to temporary cloud-runtime storage and automatically reloads it after a normal browser refresh. This prevents the table from disappearing just because the user moves between pages or refreshes the browser.
 
-The modelling page does **not** use these fields as predictors:
+Important: Streamlit Community Cloud can sleep/restart an app. Temporary runtime storage is not guaranteed to survive a full cloud restart. Durable long-term persistence should later use a managed database/object store.
 
-- initiating_agent_type
-- sender_agent_type
-- receiver_agent_type
-- behaviour
-- scenario_id
-- fraud_label / label
-- sender_wallet / receiver_wallet
-- transaction_type
+## Network graph
 
-They remain available for audit and EDA only.
+- All graph nodes use the same circle shape.
+- Blue = genuine
+- Red = fraud-related
+- The graph supports zoom/pan plus node selection.
+- Clicking a node opens a relationship explorer showing:
+  - agent type and status
+  - incoming/outgoing connections
+  - one-hop neighborhood graph
+  - direct relationships and amounts
+  - relationship/network pattern indicators
+  - simulator ground-truth fraud behaviours involving that node
+  - transactions involving the selected node
 
-## Fully-online deployment
+Pattern indicators are descriptive graph signals, not independent proof of fraud.
 
-See `DEPLOY_ONLINE.md`. Once deployed to Streamlit Community Cloud, simulation, EDA,
-network visualisation and model training run on the cloud service. You do not need Python,
-VS Code, a database or a local server on your computer.
+## Modelling
 
-## Persistence
-
-V1 stores generated datasets in the active Streamlit session. Download the ZIP if you need
-to keep a run. Persistent cloud storage (for example a managed database) can be added in V2.
-
-## Research-source alignment
-
-The project specification defines Approach 2 as a simulated cryptocurrency ecosystem with
-autonomous agents and lists Normal User, Merchant, Exchange, Scammer and Money Launderer
-behaviours. V1 follows that terminology and keeps the wider fraud-detection pipeline separate
-from simulation provenance.
+The existing leakage protection remains. Agent type, behaviour, scenario, wallet identity and ground-truth label are not used as ML predictors.

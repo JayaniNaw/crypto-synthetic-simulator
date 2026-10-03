@@ -1,7 +1,8 @@
-crypto_synthetic_webapp_v1/
+crypto_synthetic_webapp_v1_1/
 ├── streamlit_app.py
 ├── requirements.txt
 ├── README.md
+├── CHANGELOG_V1_1.md
 ├── DEPLOY_ONLINE.md
 ├── PROJECT_STRUCTURE.txt
 ├── .streamlit/
@@ -10,4 +11,5 @@ crypto_synthetic_webapp_v1/
     ├── __init__.py
     ├── simulator.py
     ├── graphs.py
-    └── modeling.py
+    ├── modeling.py
+    └── storage.py
