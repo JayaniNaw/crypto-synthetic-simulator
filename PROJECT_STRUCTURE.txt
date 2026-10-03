@@ -1,0 +1,13 @@
+crypto_synthetic_webapp_v1/
+├── streamlit_app.py
+├── requirements.txt
+├── README.md
+├── DEPLOY_ONLINE.md
+├── PROJECT_STRUCTURE.txt
+├── .streamlit/
+│   └── config.toml
+└── src/
+    ├── __init__.py
+    ├── simulator.py
+    ├── graphs.py
+    └── modeling.py
