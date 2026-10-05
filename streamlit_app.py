@@ -22,27 +22,95 @@ from src.storage import load_latest_run, save_latest_run
 
 st.set_page_config(
     page_title="Crypto Transaction Simulator",
-    page_icon="🔷",
+    page_icon="◼",
     layout="wide",
 )
 
 st.markdown(
     """
     <style>
-      .block-container {padding-top: 1.2rem; padding-bottom: 2rem;}
-      div[data-testid="stMetric"] {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 12px;
+      :root {
+        --ui-black: #111111;
+        --ui-white: #ffffff;
+        --ui-grey-50: #fafafa;
+        --ui-grey-100: #f5f5f5;
+        --ui-grey-300: #d4d4d4;
+        --ui-grey-600: #525252;
       }
+
+      .block-container {
+        padding-top: 1.2rem;
+        padding-bottom: 2rem;
+      }
+
+      /* Monochrome app surface */
+      .stApp {
+        background: var(--ui-white);
+        color: var(--ui-black);
+      }
+
+      section[data-testid="stSidebar"] {
+        background: var(--ui-grey-50);
+        border-right: 1px solid #e5e5e5;
+      }
+
+      /* Metric cards */
+      div[data-testid="stMetric"] {
+        background: var(--ui-white);
+        border: 1px solid #dedede;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: none;
+      }
+
+      /* Primary actions: black, never warning-red */
+      button[kind="primary"],
+      div[data-testid="stDownloadButton"] button {
+        background: var(--ui-black) !important;
+        color: var(--ui-white) !important;
+        border: 1px solid var(--ui-black) !important;
+        box-shadow: none !important;
+      }
+
+      button[kind="primary"]:hover,
+      div[data-testid="stDownloadButton"] button:hover {
+        background: #2a2a2a !important;
+        color: var(--ui-white) !important;
+        border-color: #2a2a2a !important;
+      }
+
+      /* Secondary/navigation actions: white with black/grey border */
+      button[kind="secondary"] {
+        background: var(--ui-white) !important;
+        color: var(--ui-black) !important;
+        border: 1px solid var(--ui-grey-300) !important;
+        box-shadow: none !important;
+      }
+
+      button[kind="secondary"]:hover {
+        background: var(--ui-grey-100) !important;
+        color: var(--ui-black) !important;
+        border-color: var(--ui-black) !important;
+      }
+
       section[data-testid="stSidebar"] div.stButton > button {
-        border-radius: 10px;
+        border-radius: 8px;
         min-height: 44px;
         font-weight: 600;
         text-align: left;
       }
-      .small-note {color:#64748b; font-size:0.9rem;}
+
+      /* Form controls */
+      div[data-baseweb="input"] > div,
+      div[data-baseweb="select"] > div {
+        border-color: #cfcfcf !important;
+        background: var(--ui-white) !important;
+      }
+
+      .small-note {
+        color: var(--ui-grey-600);
+        font-size: 0.9rem;
+      }
     </style>
     """,
     unsafe_allow_html=True,
@@ -97,7 +165,7 @@ def make_download_zip():
 def nav_button(label: str, icon: str):
     active = st.session_state.page == label
     if st.sidebar.button(
-        f"{icon}  {label}",
+        label if not icon else f"{icon}  {label}",
         key=f"nav_{label}",
         use_container_width=True,
         type="primary" if active else "secondary",
@@ -106,14 +174,14 @@ def nav_button(label: str, icon: str):
         st.rerun()
 
 
-st.title("🔷 Crypto Transaction Simulator")
+st.title("Crypto Transaction Simulator")
 st.caption("Multi-agent simulation for synthetic cryptocurrency transaction data")
 
 st.sidebar.markdown("### Navigation")
-nav_button("Simulation", "▶")
-nav_button("Network Graph", "🕸️")
-nav_button("EDA", "📊")
-nav_button("Modelling", "🧠")
+nav_button("Simulation", "")
+nav_button("Network Graph", "")
+nav_button("EDA", "")
+nav_button("Modelling", "")
 st.sidebar.divider()
 if have_data():
     st.sidebar.success(f"Dataset loaded: {len(st.session_state.transactions):,} transactions")
@@ -127,49 +195,53 @@ page = st.session_state.page
 if page == "Simulation":
     st.subheader("1. Simulation Setup")
 
-    c1, c2, c3 = st.columns(3)
-    with c1:
+    # Clean two-row form grid: no agent-category subheadings.
+    row1 = st.columns(4, gap="medium")
+    with row1[0]:
         n_transactions = st.number_input(
             "Number of transactions", 200, 20000,
             int((st.session_state.last_config or {}).get("n_transactions", 1000)),
             step=100,
         )
+    with row1[1]:
         duration_days = st.number_input(
             "Simulation duration (days)", 1, 365,
             int((st.session_state.last_config or {}).get("duration_days", 30)),
         )
+    with row1[2]:
         seed = st.number_input(
             "Random seed", 1, 999999,
             int((st.session_state.last_config or {}).get("seed", 42)),
         )
-
-    with c2:
-        st.markdown("#### Legitimate agents")
+    with row1[3]:
         normal_users = st.number_input(
             "Normal Users", 2, 100,
             int((st.session_state.last_config or {}).get("normal_users", 10)),
         )
+
+    row2 = st.columns(4, gap="medium")
+    with row2[0]:
         merchants = st.number_input(
             "Merchants", 1, 30,
             int((st.session_state.last_config or {}).get("merchants", 3)),
         )
+    with row2[1]:
         exchanges = st.number_input(
             "Exchange", 1, 10,
             int((st.session_state.last_config or {}).get("exchanges", 1)),
         )
-
-    with c3:
-        st.markdown("#### Fraud-related agents")
+    with row2[2]:
         scammers = st.number_input(
             "Scammer", 1, 20,
             int((st.session_state.last_config or {}).get("scammers", 1)),
         )
+    with row2[3]:
         money_launderers = st.number_input(
             "Money Launderer", 1, 20,
             int((st.session_state.last_config or {}).get("money_launderers", 2)),
         )
 
-    button_label = "▶ Run Simulation" if not have_data() else "↻ Run New Simulation (replace current dataset)"
+    button_label = "Run Simulation" if not have_data() else "Run New Simulation (replace current dataset)"
     if st.button(button_label, type="primary", use_container_width=True):
         cfg = {
             "n_transactions": int(n_transactions),
@@ -210,10 +282,12 @@ if page == "Simulation":
         m3.metric("Fraud", f"{(tx.fraud_label == 1).sum():,}")
         m4.metric("Wallets", f"{len(st.session_state.wallets):,}")
 
+        st.markdown("### Transaction Table")
+
         d1, d2 = st.columns([1, 3])
         with d1:
             st.download_button(
-                "⬇ Download Dataset ZIP",
+                "Download Dataset ZIP",
                 data=make_download_zip(),
                 file_name="synthetic_crypto_dataset.zip",
                 mime="application/zip",
@@ -225,7 +299,6 @@ if page == "Simulation":
                 "Contains transactions.csv, wallets.csv, scenarios.csv and the simulation configuration."
             )
 
-        st.markdown("### Transaction Table")
         st.dataframe(tx, use_container_width=True, height=520)
 
         st.markdown("### Agent / Wallet Table")

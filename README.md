@@ -1,4 +1,4 @@
-# Crypto Transaction Simulator — Version 1.1
+# Crypto Transaction Simulator — Version 1.2
 
 This update applies the requested interface and network-graph improvements while preserving the Version 1 simulation, EDA and modelling pipeline.
 
@@ -55,3 +55,14 @@ Pattern indicators are descriptive graph signals, not independent proof of fraud
 ## Modelling
 
 The existing leakage protection remains. Agent type, behaviour, scenario, wallet identity and ground-truth label are not used as ML predictors.
+
+
+## V1.2 interface refinements
+
+- Switched the application interface to a black-and-white visual system.
+- Primary actions and the active navigation button are black rather than red.
+- Secondary navigation buttons are white with neutral borders.
+- Removed the `Legitimate agents` and `Fraud-related agents` setup subheadings.
+- Rebuilt Simulation Setup as an aligned 4-column, 2-row form grid.
+- Moved the dataset download button to directly below the `Transaction Table` heading.
+- The network graph intentionally keeps blue/red semantic colors because they encode genuine/fraud-related nodes.

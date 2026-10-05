@@ -1,8 +1,9 @@
-crypto_synthetic_webapp_v1_1/
+crypto_synthetic_webapp_v1_2/
 ├── streamlit_app.py
 ├── requirements.txt
 ├── README.md
 ├── CHANGELOG_V1_1.md
+├── CHANGELOG_V1_2.md
 ├── DEPLOY_ONLINE.md
 ├── PROJECT_STRUCTURE.txt
 ├── .streamlit/
